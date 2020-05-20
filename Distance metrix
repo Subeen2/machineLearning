@@ -1,0 +1,98 @@
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+f = open('seoul_tax.txt', 'r', encoding='UTF-8')
+lines = f.readlines()
+
+lines
+
+section = []
+
+for line in lines:
+  value = line.split('\t') #file 읽어서 한줄씩 자른 후에 section에 넣기
+  section.append(value)
+
+f.close()
+
+section 
+
+
+arr = np.array(section)
+column = arr[0][:]  #arr[0,:]와 같음
+sector = arr[1:, 0]
+number = arr[1:,1:]
+number = np.array(number,dtype=int)
+
+def cosain(arr):
+  cosine_arr = cosine_similarity(arr)
+
+  for i in range(25):
+    for j in range(25):
+      cosine_arr[i,j]= 1-cosine_arr[i,j] #cosine distance = 1-cos@
+
+  return cosine_arr
+
+#cos = cosain(number)
+
+plt.figure()
+plt.title('cosine')
+plt.pcolor(cos)
+plt.colorbar()
+plt.show()
+
+def manhattan(arr):
+  new_arr = np.zeros((25,25))
+
+  for i in range(25):
+    for j in range(25):
+      distance = 0
+
+      temp = arr[i]
+
+      temp2 = arr[j]
+
+      for k in range(13):
+        distance += np.abs(temp[k]-temp2[k]) # 절댓값
+
+      new_arr[i,j] = distance
+
+  return new_arr
+
+manhat = manhattan(number)
+
+plt.figure()
+plt.title('manhattan')
+plt.pcolor(manhat)
+plt.colorbar()
+plt.show()
+
+def euclidean(arr):
+  new_arr = np.zeros((25, 25))
+
+  arr = np.array(arr,dtype=np.float32)
+
+  for i in range(25):
+    for j in range(25):
+      distance = 0
+
+      temp = arr[i]
+
+      temp2 = arr[j]
+
+      for k in range(13):
+        distance += pow(temp[k] - temp2[k],2) #두번 제곱한다
+
+      new_arr[i,j] = distance ** 0.5 #루트랑 똑같음
+
+  return new_arr
+
+eu = euclidean(number)
+
+plt.figure()
+plt.title('euclidean')
+plt.pcolor(eu)
+plt.colorbar()
+plt.show()
